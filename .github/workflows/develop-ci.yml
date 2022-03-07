@@ -79,10 +79,10 @@ jobs:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "/src/"
-          output_location: "/dist/man-ng/"
+          output_location: ""
           skip_app_build: true
 
-      # - run: ls /dist/man-ng/
+      - run: ls /dist/
 
   # build_and_deploy:
   #   needs: [unit-tests, code-ql]
