@@ -65,11 +65,35 @@ jobs:
   #   - name: Perform CodeQL Analysis
   #     uses: github/codeql-action/analyze@v1
 
+  build:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: ./package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - name: Upload artifact for deployment job
+        run: |
+          zip artifact-${GITHUB_SHA}.zip -r ./dist/man-ng
+          rm -rf ./dist/man-ng
+          az storage blob upload -c build -n artifact-${GITHUB_SHA}.zip -f ${GITHUB_WORKSPACE}/artifact-${GITHUB_SHA}.zip --connection-string "${{ secrets.BUILD_STORAGE_ACCOUNT_CONNECTION_STRING }}"
+          rm artifact-${GITHUB_SHA}.zip
+
   deploy:
+    needs: build
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/angular-develop-cd.yml@main
     with:
       APP_NAME: man-ng
-      ARTIFACT_NAME: artifact-man-ng-449fde6dc6941392193af7c551d5ed04c805f30f.zip
+      ARTIFACT_NAME: artifact-${GITHUB_SHA}.zip
     secrets:
       BUILD_STORAGE_ACCOUNT_CONNECTION_STRING: ${{ secrets.BUILD_STORAGE_ACCOUNT_CONNECTION_STRING  }}
       AZURE_STATIC_WEB_APPS_API_TOKEN : ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_SALMON_MEADOW_00C345F10  }}
