@@ -16,7 +16,7 @@ jobs:
   continuous-integration:
     name: Continuous Integration
 
-    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/angular-develop-ci.yml@main
+    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/angular-ci.yml@main
     with:
       APP_NAME: $APP_NAME
     secrets:

@@ -1,0 +1,30 @@
+name: SIT CI
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'tags'
+        required: true 
+
+jobs:
+  retrieve-latest-built-sha:
+    name: Retrieve latest built sha
+    
+    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
+
+
+  # dispatch-repository:
+  #   name: Repository dispatch
+  #   if: github.event.base_ref=='refs/heads/main'
+
+  #   uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
+  #   with:
+  #     REPOSITORY: 'kubeopsskills-enterprise/man-ng-pipeline'
+  #     EVENT_TYPE: 'sit-ais-ng-repository-dispatch'
+  #     SHA: 
+  #   secrets:
+  #     PAT : ${{ secrets.PAT  }}
