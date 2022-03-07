@@ -17,7 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - run: ls /dist/man-ng/
+      # - run: ls /dist/man-ng/
 
       - uses: actions/setup-node@v2
         with:
