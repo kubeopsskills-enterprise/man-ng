@@ -13,29 +13,29 @@ env:
   APP_NAME: man-ng
     
 jobs:
-  unit-tests:
-    runs-on: ubuntu-latest
-    name: Unit tests
+  # unit-tests:
+  #   runs-on: ubuntu-latest
+  #   name: Unit tests
     
-    steps:
-      - uses: actions/checkout@v2
+  #   steps:
+  #     - uses: actions/checkout@v2
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '16'
-          cache: 'npm'
-          cache-dependency-path: ./package-lock.json
+  #     - uses: actions/setup-node@v2
+  #       with:
+  #         node-version: '16'
+  #         cache: 'npm'
+  #         cache-dependency-path: ./package-lock.json
 
-      - name: Install dependencies
-        run: npm install
+  #     - name: Install dependencies
+  #       run: npm install
 
-      - name: Run unit tests
-        run: npm run test -- --no-watch --browsers=ChromeHeadlessCI --code-coverage
+  #     - name: Run unit tests
+  #       run: npm run test -- --no-watch --browsers=ChromeHeadlessCI --code-coverage
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: ./coverage
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         name: coverage-report
+  #         path: ./coverage
 
   # code-ql:
   #   name: CodeQL
@@ -67,7 +67,7 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
-    needs: [unit-tests]
+    # needs: [unit-tests]
     name: Build
     
     steps:
@@ -103,7 +103,7 @@ jobs:
 
       - name: Download artifact from build job
         run: |
-          export ARTIFACT_NAME=artifact-$APP_NAME-${ GITHUB_SHA }.zip
+          export ARTIFACT_NAME=artifact-$APP_NAME-${GITHUB_SHA}.zip
           az storage blob download -c "build" -n ${ARTIFACT_NAME} -f ${GITHUB_WORKSPACE}/${ARTIFACT_NAME} --connection-string "${{ secrets.BUILD_STORAGE_ACCOUNT_CONNECTION_STRING }}"
           unzip ${ARTIFACT_NAME}
 
