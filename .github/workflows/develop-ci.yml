@@ -14,9 +14,9 @@ env:
     
 jobs:
   # unit-tests:
-  #   runs-on: ubuntu-latest
   #   name: Unit tests
-    
+  #   runs-on: ubuntu-latest
+
   #   steps:
   #     - uses: actions/checkout@v2
 
@@ -66,6 +66,7 @@ jobs:
   #     uses: github/codeql-action/analyze@v1
 
   build:
+    name: Build
     runs-on: ubuntu-latest
     
     steps:
@@ -85,13 +86,15 @@ jobs:
 
       - name: Upload artifact for deployment job
         run: |
-          zip artifact-${GITHUB_SHA}.zip -r ./dist/man-ng
-          rm -rf ./dist/man-ng
+          zip artifact-${GITHUB_SHA}.zip -r ./dist/${{ env.APP_NAME }}
+          rm -rf ./dist/${{ env.APP_NAME }}
           az storage blob upload -c build -n artifact-${GITHUB_SHA}.zip -f ${GITHUB_WORKSPACE}/artifact-${GITHUB_SHA}.zip --connection-string "${{ secrets.BUILD_STORAGE_ACCOUNT_CONNECTION_STRING }}"
           rm artifact-${GITHUB_SHA}.zip
 
   deploy:
+    name: Deploy
     needs: build
+    
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/angular-develop-cd.yml@main
     with:
       APP_NAME: man-ng
