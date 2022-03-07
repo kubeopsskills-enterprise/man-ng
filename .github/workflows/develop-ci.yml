@@ -106,11 +106,11 @@ jobs:
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
     with:
-      APP_NAME: man-ng
-      ARTIFACT_NAME: artifact-${{ github.event.client_payload.github_sha }}.zip
+      REPOSITORY: 'kubeopsskills-enterprise/ais-share-pipeline'
+      EVENT_TYPE: 'dev-ais-ng-repository-dispatch'
+      SHA: ${GITHUB_SHA}
     secrets:
-      STORAGE_ACCOUNT_CONNECTION_STRING : ${{ secrets.STORAGE_ACCOUNT_CONNECTION_STRING  }}
-      AZURE_STATIC_WEB_APPS_API_TOKEN : ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_SALMON_MEADOW_00C345F10  }}
+      PAT : ${{ secrets.PAT  }}
     
     # runs-on: ubuntu-latest
 
