@@ -66,7 +66,7 @@ jobs:
   #     uses: github/codeql-action/analyze@v1
 
   deploy:
-    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/angular-develop-cd.yml
+    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/angular-develop-cd.yml@latest
     with:
       APP_NAME: man-ng
       ARTIFACT_NAME: artifact-man-ng-449fde6dc6941392193af7c551d5ed04c805f30f.zip
