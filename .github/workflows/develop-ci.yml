@@ -82,7 +82,7 @@ jobs:
           output_location: "/dist/man-ng/"
           skip_app_build: true
 
-      - run: ls /dist/man-ng/
+      # - run: ls /dist/man-ng/
 
   # build_and_deploy:
   #   needs: [unit-tests, code-ql]
