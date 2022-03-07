@@ -70,3 +70,5 @@ jobs:
     with:
       APP_NAME: man-ng
       ARTIFACT_NAME: artifact-man-ng-449fde6dc6941392193af7c551d5ed04c805f30f.zip
+    secrets:
+      BUILD_STORAGE_ACCOUNT_CONNECTION_STRING: ${{ secrets.BUILD_STORAGE_ACCOUNT_CONNECTION_STRING  }}
