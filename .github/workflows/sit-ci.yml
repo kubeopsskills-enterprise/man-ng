@@ -11,27 +11,20 @@ on:
         required: true 
 
 jobs:
-  job1:
-    name: Retrieve latest built sha
+  retrieve-latest-artifact:
+    name: Retrieve latest artifact
     
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/retrieve-latest-built-sha.yml@main
-  
-  test:
-    runs-on: ubuntu-latest
-    needs: job1
 
-    steps:
-    
-    - run: echo ${{ needs.job1.outputs.sha }}
+  dispatch-repository:
+    name: Repository dispatch
+    needs: retrieve-latest-artifact
+    if: github.event.base_ref=='refs/heads/main'
 
-  # dispatch-repository:
-  #   name: Repository dispatch
-  #   if: github.event.base_ref=='refs/heads/main'
-
-  #   uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
-  #   with:
-  #     REPOSITORY: 'kubeopsskills-enterprise/man-ng-pipeline'
-  #     EVENT_TYPE: 'sit-ais-ng-repository-dispatch'
-  #     SHA: 
-  #   secrets:
-  #     PAT : ${{ secrets.PAT  }}
+    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
+    with:
+      REPOSITORY: 'kubeopsskills-enterprise/man-ng-pipeline'
+      EVENT_TYPE: 'sit-ais-ng-repository-dispatch'
+      SHA: $(echo ${{ needs.retrieve-latest-artifact.outputs.sha }} | awk 'match($0,/artifact-([a-z0-9]*).zip/,a) {print a[1]}')
+    secrets:
+      PAT : ${{ secrets.PAT  }}
