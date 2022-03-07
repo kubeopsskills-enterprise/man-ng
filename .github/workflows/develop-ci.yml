@@ -28,7 +28,7 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - run: ls /dist/man-ng/
+      # - run: ls /dist/man-ng/
 
       - name: Run unit tests
         run: npm run test -- --no-watch --browsers=ChromeHeadlessCI --code-coverage
