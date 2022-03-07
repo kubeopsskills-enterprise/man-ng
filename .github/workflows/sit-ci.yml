@@ -22,7 +22,7 @@ jobs:
 
     steps:
     
-    - run: echo ${{ needs.job1.outputs.firstword }} ${{ needs.job1.outputs.secondword }}
+    - run: echo ${{ needs.job1.outputs.sha }}
 
   # dispatch-repository:
   #   name: Repository dispatch
