@@ -18,7 +18,7 @@ jobs:
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/angular-develop-ci.yml@main
     with:
-      APP_NAME: ${{ env.APP_NAME }}
+      APP_NAME: $APP_NAME
     secrets:
       STORAGE_ACCOUNT_CONNECTION_STRING: ${{ secrets.BUILD_STORAGE_ACCOUNT_CONNECTION_STRING }}
 
