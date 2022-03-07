@@ -24,7 +24,7 @@ jobs:
 
   repository-dispatch:
     name: Repository dispatch
-    needs: build
+    needs: continuous-integration
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
     with:
