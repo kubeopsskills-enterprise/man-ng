@@ -102,6 +102,7 @@ jobs:
 
   repository-dispatch:
     name: Repository dispatch
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
