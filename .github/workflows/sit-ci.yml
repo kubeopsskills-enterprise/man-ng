@@ -14,8 +14,8 @@ jobs:
   retrieve-latest-built-sha:
     name: Retrieve latest built sha
     
-    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
-
+    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/retrieve-latest-built-sha.yml@main
+      
 
   # dispatch-repository:
   #   name: Repository dispatch
