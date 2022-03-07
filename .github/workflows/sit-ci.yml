@@ -11,19 +11,19 @@ on:
         required: true 
 
 jobs:
-  retrieve-latest-built-sha:
+  job1:
     name: Retrieve latest built sha
     
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/retrieve-latest-built-sha.yml@main
   
   test:
     runs-on: ubuntu-latest
-    needs: retrieve-latest-built-sha
+    needs: job1
 
     steps:
     
     - run: |
-        echo ${{ needs.retrieve-latest-built-sha.outputs.sha }}
+        - run: echo ${{ needs.job1.outputs.firstword }} ${{ needs.job1.outputs.secondword }}
 
   # dispatch-repository:
   #   name: Repository dispatch
