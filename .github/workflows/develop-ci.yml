@@ -89,8 +89,8 @@ jobs:
         run: |
           zip artifact-$APP_NAME-${GITHUB_SHA}.zip -r ./dist/$APP_NAME
           rm -rf ./dist/$APP_NAME
-          az storage blob upload -c build -n artifact-$APP_NAME-${ GITHUB_SHA }.zip -f ${GITHUB_WORKSPACE}/artifact-$APP_NAME-${ GITHUB_SHA }.zip --connection-string "${{ secrets.BUILD_STORAGE_ACCOUNT_CONNECTION_STRING }}"
-          rm artifact-$APP_NAME-${ GITHUB_SHA }.zip
+          az storage blob upload -c build -n artifact-$APP_NAME-${GITHUB_SHA}.zip -f ${GITHUB_WORKSPACE}/artifact-$APP_NAME-${GITHUB_SHA}.zip --connection-string "${{ secrets.BUILD_STORAGE_ACCOUNT_CONNECTION_STRING }}"
+          rm artifact-$APP_NAME-${GITHUB_SHA}.zip
 
   deploy:
     # needs: [unit-tests, code-ql]
