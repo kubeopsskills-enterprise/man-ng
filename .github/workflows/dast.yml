@@ -2,7 +2,7 @@ name: DAST
 
 on:
   repository_dispatch:
-    types: [dast-repository-dispatch]
+    types: [dast-ais-ng-repository-dispatch]
 
 jobs:
   zap_scan:
