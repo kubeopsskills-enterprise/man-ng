@@ -20,7 +20,7 @@ jobs:
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
     with:
-      REPOSITORY: 'kubeopsskills-enterprise/man-ng'
+      REPOSITORY: 'kubeopsskills-enterprise/man-ng-pipeline'
       EVENT_TYPE: 'integration-test-ais-ng-repository-dispatch'
       SHA: ${{ github.event.client_payload.github_sha }}
     secrets:
