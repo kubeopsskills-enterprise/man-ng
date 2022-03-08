@@ -14,14 +14,14 @@ jobs:
     secrets:
       TOKEN : ${{ secrets.GITHUB_TOKEN }}
 
-  repository-dispatch:
+  repository_dispatch:
     name: Repository dispatch
-    needs: zap_scan
+    needs: retrieve_latest_artifact
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
     with:
       REPOSITORY: 'kubeopsskills-enterprise/man-ng'
-      EVENT_TYPE: 'uat-ais-ng-repository-dispatch'
-      SHA: ${GITHUB_SHA}
+      EVENT_TYPE: 'integration-test-ais-ng-repository-dispatch'
+      SHA: ${{ github.event.client_payload.github_sha }}
     secrets:
       PAT : ${{ secrets.ORG_PAT  }}

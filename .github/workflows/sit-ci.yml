@@ -11,20 +11,20 @@ on:
         required: true 
 
 jobs:
-  retrieve-latest-artifact:
+  retrieve_latest_artifact:
     name: Retrieve latest artifact
     
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/retrieve-latest-build-info.yml@main
 
   dispatch-repository:
     name: Repository dispatch
-    needs: retrieve-latest-artifact
+    needs: retrieve_latest_artifact
     if: github.event.base_ref=='refs/heads/main' || github.event_name == 'workflow_dispatch'
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
     with:
       REPOSITORY: 'kubeopsskills-enterprise/man-ng-pipeline'
       EVENT_TYPE: 'sit-ais-ng-repository-dispatch'
-      SHA: ${{ needs.retrieve-latest-artifact.outputs.sha }}
+      SHA: ${{ needs.retrieve_latest_artifact.outputs.sha }}
     secrets:
       PAT : ${{ secrets.PAT  }}
