@@ -16,7 +16,7 @@ jobs:
 
   repository_dispatch:
     name: Repository dispatch
-    needs: retrieve_latest_artifact
+    needs: zap_scan
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
     with:
