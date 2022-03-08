@@ -16,6 +16,12 @@ jobs:
     
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/retrieve-latest-built-sha.yml@main
 
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - run: github.event.base_ref
+
   dispatch-repository:
     name: Repository dispatch
     needs: retrieve-latest-artifact
