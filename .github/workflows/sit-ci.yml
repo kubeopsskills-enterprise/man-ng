@@ -27,4 +27,4 @@ jobs:
       EVENT_TYPE: 'sit-ais-ng-repository-dispatch'
       SHA: ${{ needs.retrieve_latest_artifact.outputs.sha }}
     secrets:
-      PAT : ${{ secrets.PAT  }}
+      PAT : ${{ secrets.ORG_PAT  }}

@@ -13,7 +13,7 @@ env:
   APP_NAME: man-ng
     
 jobs:
-  continuous-integration:
+  continuous_integration:
     name: Continuous Integration
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/angular-ci.yml@main
@@ -24,7 +24,7 @@ jobs:
 
   repository-dispatch:
     name: Repository dispatch
-    needs: continuous-integration
+    needs: continuous_integration
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
     with:
@@ -32,4 +32,4 @@ jobs:
       EVENT_TYPE: 'dev-ais-ng-repository-dispatch'
       SHA: ${GITHUB_SHA}
     secrets:
-      PAT : ${{ secrets.PAT  }}
+      PAT : ${{ secrets.ORG_PAT  }}
