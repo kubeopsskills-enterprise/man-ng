@@ -16,12 +16,12 @@ jobs:
 
   repository-dispatch:
     name: Repository dispatch
-    needs: repository_dispatch
+    needs: zap_scan
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
     with:
       REPOSITORY: 'kubeopsskills-enterprise/man-ng'
-      EVENT_TYPE: 'dast-ais-ng-repository-dispatch'
+      EVENT_TYPE: 'uat-ais-ng-repository-dispatch'
       SHA: ${GITHUB_SHA}
     secrets:
-      PAT : ${{ secrets.PAT  }}
+      PAT : ${{ secrets.ORG_PAT  }}
