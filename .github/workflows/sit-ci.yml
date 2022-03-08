@@ -14,7 +14,7 @@ jobs:
   retrieve-latest-artifact:
     name: Retrieve latest artifact
     
-    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/retrieve-latest-built-sha.yml@main
+    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/retrieve-latest-build-info.yml@main
 
   dispatch-repository:
     name: Repository dispatch
@@ -25,6 +25,6 @@ jobs:
     with:
       REPOSITORY: 'kubeopsskills-enterprise/man-ng-pipeline'
       EVENT_TYPE: 'sit-ais-ng-repository-dispatch'
-      SHA: $(echo ${{ needs.retrieve-latest-artifact.outputs.sha }} | awk 'match($0,/artifact-([a-z0-9]*).zip/,a) {print a[1]}')
+      SHA: ${{ needs.retrieve-latest-artifact.outputs.sha }}
     secrets:
       PAT : ${{ secrets.PAT  }}

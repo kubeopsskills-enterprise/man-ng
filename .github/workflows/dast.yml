@@ -13,3 +13,15 @@ jobs:
       TARGET_URL: 'https://white-sea-0feb97210.1.azurestaticapps.net/'
     secrets:
       TOKEN : ${{ secrets.GITHUB_TOKEN }}
+
+  repository-dispatch:
+    name: Repository dispatch
+    needs: repository_dispatch
+
+    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
+    with:
+      REPOSITORY: 'kubeopsskills-enterprise/man-ng'
+      EVENT_TYPE: 'dast-ais-ng-repository-dispatch'
+      SHA: ${GITHUB_SHA}
+    secrets:
+      PAT : ${{ secrets.PAT  }}
