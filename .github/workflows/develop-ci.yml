@@ -25,6 +25,7 @@ jobs:
   repository-dispatch:
     name: Repository dispatch
     needs: continuous_integration
+    if: github.event_name == 'push'
 
     uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
     with:
