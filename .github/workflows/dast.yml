@@ -1,0 +1,15 @@
+name: DAST
+
+on:
+  repository_dispatch:
+    types: [dast-repository-dispatch]
+
+jobs:
+  zap_scan:
+    name: Scan the web application with DAST
+
+    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/dast.yml@main
+    with:
+      TARGET_URL: 'https://white-sea-0feb97210.1.azurestaticapps.net/'
+    secrets:
+      TOKEN : ${{ secrets.GITHUB_TOKEN }}
