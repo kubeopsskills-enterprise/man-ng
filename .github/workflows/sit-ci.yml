@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - run: github.event.base_ref
+    - run: echo github.event.base_ref
 
   dispatch-repository:
     name: Repository dispatch
