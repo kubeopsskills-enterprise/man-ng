@@ -76,7 +76,7 @@ jobs:
 
       - name: Repository dispatch
         run: |
-          DISPATCH_BODY=$(jq '.event_type |= "${{ inputs.EVENT_TYPE }}" | .client_payload.github_sha |= "'${{ inputs.SHA }}'"' ./.github/template/env-repository-dispatch.json)
+          DISPATCH_BODY=$(jq '.event_type |= "dev-ais-ng-repository-dispatch" | .client_payload.github_sha |= "'${{ inputs.SHA }}'"' ./.github/template/env-repository-dispatch.json)
           echo $DISPATCH_BODY
           curl -v --location --request POST 'https://api.github.com/repos/'${{ env.APP_NAME }}'-pipeline/dispatches' \
             --header 'Authorization: Bearer ${{ secrets.ORG_PAT }}' \
