@@ -57,13 +57,13 @@ jobs:
       - name: Packing Arifact Files
         id: packing-artifact-release
         run: |
-          zip artifact-${{ env.APP_NAME }}-${{ env.RELEASE_VERSION }}.zip -r ./dist/${{ env.APP_NAME }}
+          zip artifact-${{ secrets.MAN_NG_APP_NAME }}-${{ env.RELEASE_VERSION }}.zip -r ./dist/${{ secrets.MAN_NG_APP_NAME }}
           echo "::set-output name=release_version::"${{ env.RELEASE_VERSION }}
           
       - name: Upload Artifact Release
         uses: softprops/action-gh-release@v1
         with:
-          files: .\artifact-${{ env.APP_NAME }}-${{ env.RELEASE_VERSION }}.zip
+          files: ./artifact-${{ secrets.MAN_NG_APP_NAME }}-${{ env.RELEASE_VERSION }}.zip
           tag_name: ${{ env.RELEASE_VERSION }}
 
   # repository_dispatch:
