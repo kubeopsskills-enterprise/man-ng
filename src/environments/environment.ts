@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  someSecret: "develop-secret"
+  someSecret: "#{SOME_SECRET}#"
 };
 
 /*
