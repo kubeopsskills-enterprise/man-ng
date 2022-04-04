@@ -67,7 +67,7 @@ jobs:
 
   repository_dispatch:
     name: Repository dispatch
-    needs: [unit_tests, codeql]
+    # needs: [unit_tests, codeql]
     runs-on: ubuntu-latest
 
     steps:
