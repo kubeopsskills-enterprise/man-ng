@@ -71,6 +71,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
       - name: Repository dispatch
         run: |
           DISPATCH_BODY=$(jq '.event_type |= "${{ inputs.EVENT_TYPE }}" | .client_payload.github_sha |= "'${{ inputs.SHA }}'"' ./.github/template/env-repository-dispatch.json)
