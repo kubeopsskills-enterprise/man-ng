@@ -8,29 +8,75 @@ on:
     branches:
       - develop
   workflow_dispatch:
-
-env:
-  APP_NAME: man-ng
     
 jobs:
-  continuous_integration:
-    name: Continuous Integration
+  unit_tests:
+    name: Unit tests
+    runs-on: ubuntu-latest
 
-    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/angular-ci.yml@main
-    with:
-      APP_NAME: $APP_NAME
-    secrets:
-      STORAGE_ACCOUNT_CONNECTION_STRING: ${{ secrets.BUILD_STORAGE_ACCOUNT_CONNECTION_STRING }}
+    steps:
+      - uses: actions/checkout@v3
 
-  repository-dispatch:
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: ./package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run unit tests
+        run: npm run test -- --no-watch --browsers=ChromeHeadlessCI --code-coverage
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: ./coverage
+
+  codeql:
+    name: CodeQL
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [ 'javascript' ]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v1
+      with:
+        languages: ${{ matrix.language }}
+
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v1
+
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v1
+
+  repository_dispatch:
     name: Repository dispatch
-    needs: continuous_integration
-    if: github.event_name == 'push'
+    needs: [unit_tests, codeql]
+    runs-on: ubuntu-latest
 
-    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
-    with:
-      REPOSITORY: 'kubeopsskills-enterprise/man-ng-pipeline'
-      EVENT_TYPE: 'dev-ais-ng-repository-dispatch'
-      SHA: ${GITHUB_SHA}
-    secrets:
-      PAT : ${{ secrets.ORG_PAT  }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Repository dispatch
+        run: |
+          DISPATCH_BODY=$(jq '.event_type |= "dev-ais-ng-repository-dispatch" | .client_payload.github_sha |= "'${{ inputs.SHA }}'"' ./.github/template/env-repository-dispatch.json)
+          echo $DISPATCH_BODY
+          curl -v --location --request POST 'https://api.github.com/repos/'${{ secrets.ORG_NAME }}'/'${{ secrets.MAN_NG_APP_NAME }}'-pipeline/dispatches' \
+            --header 'Authorization: Bearer ${{ secrets.ORG_PAT }}' \
+            --header 'accept: application/vnd.github.v3+json' \
+            --header 'Content-Type: application/json' \
+            --data-raw "$DISPATCH_BODY"
