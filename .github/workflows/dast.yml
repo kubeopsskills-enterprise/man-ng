@@ -2,7 +2,7 @@ name: DAST
 
 on:
   repository_dispatch:
-    types: [dast-ais-ng-repository-dispatch]
+    types: [dast-man-ng-repository-dispatch]
 
 env:
   SIT_SITE: "https://purple-grass-06a8be510.1.azurestaticapps.net"
