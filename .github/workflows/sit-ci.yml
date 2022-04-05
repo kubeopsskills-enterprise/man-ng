@@ -66,24 +66,21 @@ jobs:
           files: ./artifact-${{ secrets.MAN_NG_APP_NAME }}-${{ env.RELEASE_VERSION }}.zip
           tag_name: ${{ env.RELEASE_VERSION }}
 
-  # repository_dispatch:
-  #   name: Repository dispatch
-  #   needs: [build]
-  #   runs-on: ubuntu-latest
+  repository_dispatch:
+    name: Repository dispatch
+    needs: [build]
+    runs-on: ubuntu-latest
 
-  #   steps:
-  #     - run: echo "retrieved_reference=${{needs.build.outputs.release_version}}" >> $GITHUB_ENV
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-  #     - uses: actions/checkout@v3
-  #       with:
-  #         ref: ${{ env.retrieved_reference }}
-
-  #     - name: Repository dispatch
-  #       run: |
-  #         DISPATCH_BODY=$(jq '.event_type |= "sit-man-net48-repository-dispatch" | .client_payload.git_reference |= "'${{ env.retrieved_reference }}'"' ./.github/template/env-repository-dispatch.json)
-  #         echo $DISPATCH_BODY
-  #         curl -v --location --request POST 'https://api.github.com/repos/kubeopsskills-enterprise/man-net48-pipeline/dispatches' \
-  #           --header 'Authorization: Bearer ${{ secrets.ORG_PAT }}' \
-  #           --header 'accept: application/vnd.github.v3+json' \
-  #           --header 'Content-Type: application/json' \
-  #           --data-raw "$DISPATCH_BODY"
+      - name: Repository dispatch
+        run: |
+          DISPATCH_BODY=$(jq '.event_type |= "dev-ais-ng-repository-dispatch" | .client_payload.github_sha |= "'${{ inputs.SHA }}'"' ./.github/template/env-repository-dispatch.json)
+          echo $DISPATCH_BODY
+          curl -v --location --request POST 'https://api.github.com/repos/'${{ secrets.ORG_NAME }}'/'${{ secrets.MAN_NG_APP_NAME }}'-pipeline/dispatches' \
+            --header 'Authorization: Bearer ${{ secrets.ORG_PAT }}' \
+            --header 'accept: application/vnd.github.v3+json' \
+            --header 'Content-Type: application/json' \
+            --data-raw "$DISPATCH_BODY"
