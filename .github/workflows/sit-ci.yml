@@ -11,20 +11,76 @@ on:
         required: true 
 
 jobs:
-  retrieve_latest_artifact:
-    name: Retrieve latest artifact
-    
-    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/retrieve-latest-build-info.yml@main
-
-  dispatch-repository:
-    name: Repository dispatch
-    needs: retrieve_latest_artifact
+  build:
+    name: Build
+    runs-on: ubuntu-latest
     if: github.event.base_ref=='refs/heads/main' || github.event_name == 'workflow_dispatch'
+    
+    outputs:
+      release_version: ${{ steps.packing-artifact-release.outputs.release_version }}
 
-    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
-    with:
-      REPOSITORY: 'kubeopsskills-enterprise/man-ng-pipeline'
-      EVENT_TYPE: 'sit-ais-ng-repository-dispatch'
-      SHA: ${{ needs.retrieve_latest_artifact.outputs.sha }}
-    secrets:
-      PAT : ${{ secrets.ORG_PAT  }}
+    steps:
+      - name: Set env (Triggered by tagging)
+        if: github.event.base_ref=='refs/heads/main'
+        run: |
+          echo "RELEASE_VERSION=${{ github.ref_name }}"
+          echo "RELEASE_VERSION=${{ github.ref_name }}" >> $GITHUB_ENV
+
+      - name: Set env (Triggered by workflow dispatch)
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "RELEASE_VERSION=${{ github.event.inputs.tags }}"
+          echo "RELEASE_VERSION=${{ github.event.inputs.tags }}" >> $GITHUB_ENV
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.RELEASE_VERSION }}
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16'
+          cache: 'npm'
+          cache-dependency-path: ./package-lock.json
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: ng-app
+          path: dist/
+
+      - name: Packing Arifact Files
+        id: packing-artifact-release
+        run: |
+          zip artifact-${{ secrets.MAN_NG_APP_NAME }}-${{ env.RELEASE_VERSION }}.zip -r ./dist/${{ secrets.MAN_NG_APP_NAME }}
+          echo "::set-output name=release_version::"${{ env.RELEASE_VERSION }}
+          
+      - name: Upload Artifact Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ./artifact-${{ secrets.MAN_NG_APP_NAME }}-${{ env.RELEASE_VERSION }}.zip
+          tag_name: ${{ env.RELEASE_VERSION }}
+
+  repository_dispatch:
+    name: Repository dispatch
+    needs: [build]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Repository dispatch
+        run: |
+          DISPATCH_BODY=$(jq '.event_type |= "dev-${{ secrets.MAN_NG_APP_NAME }}-repository-dispatch" | .client_payload.github_sha |= "'${{ inputs.SHA }}'"' ./.github/template/env-repository-dispatch.json)
+          echo $DISPATCH_BODY
+          curl -v --location --request POST 'https://api.github.com/repos/'${{ secrets.ORG_NAME }}'/'${{ secrets.MAN_NG_APP_NAME }}'-pipeline/dispatches' \
+            --header 'Authorization: Bearer ${{ secrets.ORG_PAT }}' \
+            --header 'accept: application/vnd.github.v3+json' \
+            --header 'Content-Type: application/json' \
+            --data-raw "$DISPATCH_BODY"

@@ -2,26 +2,46 @@ name: DAST
 
 on:
   repository_dispatch:
-    types: [dast-ais-ng-repository-dispatch]
+    types: [dast-man-ng-repository-dispatch]
+
+env:
+  SIT_SITE: "https://purple-grass-06a8be510.1.azurestaticapps.net"
 
 jobs:
   zap_scan:
+    runs-on: ubuntu-20.04
     name: Scan the web application with DAST
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.client_payload.git_reference }}
 
-    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/dast.yml@main
-    with:
-      TARGET_URL: 'https://white-sea-0feb97210.1.azurestaticapps.net/'
-    secrets:
-      TOKEN : ${{ secrets.GITHUB_TOKEN }}
+      - name: ZAP Scan
+        uses: zaproxy/action-full-scan@v0.3.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          docker_name: 'owasp/zap2docker-stable'
+          target: ${{ env.SIT_SITE }}
+          rules_file_name: '.zap/rules.tsv'
+          fail_action: true
 
   repository_dispatch:
     name: Repository dispatch
-    needs: zap_scan
+    needs: [zap_scan]
+    runs-on: ubuntu-latest
 
-    uses: kubeopsskills-enterprise/ais-share-pipeline/.github/workflows/repository-dispatch.yml@main
-    with:
-      REPOSITORY: 'kubeopsskills-enterprise/man-ng-pipeline'
-      EVENT_TYPE: 'integration-test-ais-ng-repository-dispatch'
-      SHA: ${{ github.event.client_payload.github_sha }}
-    secrets:
-      PAT : ${{ secrets.ORG_PAT  }}
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.client_payload.git_reference }}
+
+      - name: Repository dispatch
+        run: |
+          DISPATCH_BODY=$(jq '.event_type |= "integration-test-${{ secrets.MAN_NG_APP_NAME }}-repository-dispatch" | .client_payload.git_reference |= "'${{ github.event.client_payload.git_reference }}'"' ./.github/template/env-repository-dispatch.json)
+          echo $DISPATCH_BODY
+          curl -v --location --request POST 'https://api.github.com/repos/kubeopsskills-enterprise/${{ secrets.MAN_NG_APP_NAME }}-pipeline/dispatches' \
+            --header 'Authorization: Bearer ${{ secrets.ORG_PAT }}' \
+            --header 'accept: application/vnd.github.v3+json' \
+            --header 'Content-Type: application/json' \
+            --data-raw "$DISPATCH_BODY"
