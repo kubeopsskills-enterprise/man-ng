@@ -72,12 +72,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - run: echo "retrieved_reference=${{needs.build.outputs.release_version}}" >> $GITHUB_ENV
+
       - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Repository dispatch
         run: |
-          DISPATCH_BODY=$(jq '.event_type |= "sit-${{ secrets.MAN_NG_APP_NAME }}-repository-dispatch" | .client_payload.github_sha |= "'${{ inputs.SHA }}'"' ./.github/template/env-repository-dispatch.json)
+          DISPATCH_BODY=$(jq '.event_type |= "sit-${{ secrets.MAN_NG_APP_NAME }}-repository-dispatch" | .client_payload.github_sha |= "'${{ env.retrieved_reference }}'"' ./.github/template/env-repository-dispatch.json)
           echo $DISPATCH_BODY
           curl -v --location --request POST 'https://api.github.com/repos/'${{ secrets.ORG_NAME }}'/'${{ secrets.MAN_NG_APP_NAME }}'-pipeline/dispatches' \
             --header 'Authorization: Bearer ${{ secrets.ORG_PAT }}' \
